@@ -1,0 +1,89 @@
+{
+  "name": "@dark-mechanicum/core",
+  "version": "1.0.0",
+  "description": "Library to work with service-config service API interfaces",
+  "main": "dist/src/index.js",
+  "module": "dist/src/index.js",
+  "jsnext:main": "dist/src/index.js",
+  "typings": "dist/src/index.d.ts",
+  "author": "Andrei Kazakou <a.v.kazakou@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/enginseer/core.git"
+  },
+  "engines": {
+    "node": ">=16",
+    "npm": ">=8"
+  },
+  "scripts": {
+    "build": "rimraf ./dist && tsc",
+    "test": "jest --detectOpenHandles",
+    "lint": "eslint --ext ts .",
+    "prepublishOnly": "npm run build && npm run lint && npm run test"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.4.0",
+    "@typescript-eslint/eslint-plugin": "^5.12.1",
+    "@typescript-eslint/parser": "^5.12.1",
+    "eslint": "^8.9.0",
+    "husky": "^7.0.4",
+    "jest": "^27.5.1",
+    "jest-junit": "^13.0.0",
+    "rimraf": "^3.0.2",
+    "source-map-support": "^0.5.21",
+    "ts-jest": "^27.1.3",
+    "ts-node": "^10.5.0",
+    "typescript": "^4.5.5"
+  },
+  "dependencies": {
+    "@types/node": "^17.0.19",
+    "tslib": "^2.3.1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint && npm run test",
+      "pre-push": "npm run prepublishOnly"
+    }
+  },
+  "jest": {
+    "verbose": true,
+    "testEnvironment": "node",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 100,
+        "functions": 100,
+        "lines": 100,
+        "statements": 100
+      }
+    },
+    "transform": {
+      "^.+\\.(ts|tsx)$": "ts-jest"
+    },
+    "globals": {
+      "ts-jest": {
+        "tsconfig": "tsconfig.lint.json",
+        "diagnostics": true
+      }
+    },
+    "testMatch": [
+      "<rootDir>/__tests__/**/*.+(ts|tsx|js)"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/__tests__/fixtures/",
+      "<rootDir>/__tests__/init/*.+(ts|tsx|js)"
+    ],
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "<rootDir>/src/**/*.+(ts|tsx|js)",
+      "<rootDir>/src/index.+(ts|tsx|js)"
+    ],
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/src/types/*.+(ts|tsx|js)"
+    ]
+  }
+}

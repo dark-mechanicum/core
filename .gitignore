@@ -1,0 +1,22 @@
+#IntelliJ
+.idea
+
+#VSCode
+.vscode
+
+# Logs
+*.log
+
+# Dependency directories
+node_modules
+
+# Build directory shouldn't be in repository
+dist
+coverage
+
+# Custom configuration of
+.npmrc
+
+# jest-sonar-report XML report
+test-report.xml
+dependency-check-report.html
