@@ -1,0 +1,39 @@
+name: Build and verify package
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: Build package
+    strategy:
+      matrix:
+        node: [ '10', '12', '14', '16' ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v2
+
+      - name: Unshallow Git version
+        run: git fetch --unshallow
+
+      - name: Setup Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Cache npm sources
+        uses: actions/cache@v2
+        env:
+          cache-name: lib-config-revenue
+          nodejs-version: node${{ matrix.node }}
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ env.nodejs-version }}-${{ hashFiles('**/package-lock.json') }}
+
+      - name: Install Node.js dependencies
+        run: npm ci
+
+      - name: Run unit tests
+        run: npm test
+
+      - name: Run unit tests
+        run: npm run build
