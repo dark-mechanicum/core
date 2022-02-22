@@ -13,7 +13,6 @@ name: "CodeQL Quality Analysis"
 
 on:
   push:
-  pull_request:
   schedule:
     - cron: '30 5 * * 1,2,3,4,5'
 
