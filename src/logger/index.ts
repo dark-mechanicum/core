@@ -3,235 +3,215 @@ import EventEmitter from 'events';
 /**
  * Allowed levels of log messages
  */
-type AllowedLogLevels = 'debug' | 'info' | 'notice' | 'warning' | 'error' | 'critical' | 'emergency' | 'alert';
+type LogLevelTypes = 'debug' | 'info' | 'notice' | 'warning' | 'error' | 'critical' | 'emergency' | 'alert';
 
 /**
- * Logger initialization options
+ * Log message data structure that will be delivered to the log transports
  */
-interface LoggerOptions {
+interface LogMessageData {
+  /**
+   * Date when log message was created
+   */
+  date: string;
+  /**
+   * Level of log message
+   */
+  level: LogLevelTypes;
+  /**
+   * Human explanation of record sense
+   */
+  message: string;
+  /**
+   * Tags that allows to filter data at the next steps
+   */
+  tags?: string[];
+  /**
+   * Usefully data that describes a log message in details
+   */
+  payload?: unknown;
 }
 
 /**
- * Logger methods available for users
+ * Description of the log message
  */
-interface LoggingMethods {
+class LogMessage {
   /**
-   * Kernel debugging messages, output by the kernel if the developer enabled debugging at compile time
-   * @param {string} message - Human explanation of record sense
-   * @param {LogMessageOptions} options - List of additional options to describe a message
-   * @param {string[]} options.tags - List of tags to allow filtering and process messages
-   * @param {?} options.payload - Any additional information related to current log message. That value will be stringifies with JSON.stringify() method
+   * Date when log message was created
+   * @protected
    */
-  debug(message: string, options?: LogMessageOptions): this;
+  protected _date: Date;
+  /**
+   * Level of log message
+   * @protected
+   */
+  protected _level: LogLevelTypes;
+  /**
+   * Human explanation of record sense
+   * @protected
+   */
+  protected _message: string;
+  /**
+   * Usefully data that describes a log message in details
+   * @protected
+   */
+  protected _payload?: unknown;
+  /**
+   * Tags that allows to filter data at the next steps
+   * @protected
+   */
+  protected _tags: Set<string> = new Set();
 
   /**
-   * Informational messages that require no action
-   * @param {string} message - Human explanation of record sense
-   * @param {LogMessageOptions} options - List of additional options to describe a message
-   * @param {string[]} options.tags - List of tags to allow filtering and process messages
-   * @param {?} options.payload - Any additional information related to current log message. That value will be stringifies with JSON.stringify() method
+   * Creates a new one log message
+   * @param {LogLevelTypes} level - One of the allowed levels for log message
+   * @param {string} message
    */
-  info(message: string, options?: LogMessageOptions): this;
+  constructor(level: LogLevelTypes, message: string) {
+    this._date = new Date();
+    this._message = message;
+    this._level = level;
+  }
 
   /**
-   * Normal, but significant events.
-   * @param {string} message - Human explanation of record sense
-   * @param {LogMessageOptions} options - List of additional options to describe a message
-   * @param {string[]} options.tags - List of tags to allow filtering and process messages
-   * @param {?} options.payload - Any additional information related to current log message. That value will be stringifies with JSON.stringify() method
+   * Assign usefully data that describes a log message in details
+   * @param {?} data - Usefully data that describes a log message in details. Will be used JSON.stringify() to convert it into the JSON structure for next steps
    */
-  notice(message: string, options?: LogMessageOptions): this;
+  payload(data: unknown) {
+    this._payload = data;
+    return this;
+  }
 
   /**
-   * Warning conditions that should be taken care of.
-   * @param {string} message - Human explanation of record sense
-   * @param {LogMessageOptions} options - List of additional options to describe a message
-   * @param {string[]} options.tags - List of tags to allow filtering and process messages
-   * @param {?} options.payload - Any additional information related to current log message. That value will be stringifies with JSON.stringify() method
+   * Assign tags that allow to filter data at the next steps
+   * @param {string[]} tags
    */
-  warning(message: string, options?: LogMessageOptions): this;
+  tags(tags: string[]): this {
+    tags.forEach((tag: string) => this._tags.add(tag));
+    return this;
+  }
 
   /**
-   * Non-critical error conditions.
-   * @param {string} message - Human explanation of record sense
-   * @param {LogMessageOptions} options - List of additional options to describe a message
-   * @param {string[]} options.tags - List of tags to allow filtering and process messages
-   * @param {?} options.payload - Any additional information related to current log message. That value will be stringifies with JSON.stringify() method
+   * Method converts log message object to JSON structure
    */
-  error(message: string, options?: LogMessageOptions): this;
+  toJSON(): LogMessageData {
+    const data: LogMessageData = {
+      date: this._date.toISOString(),
+      level: this._level,
+      message: this._message,
+    };
 
-  /**
-   * Critical conditions.
-   * @param {string} message - Human explanation of record sense
-   * @param {LogMessageOptions} options - List of additional options to describe a message
-   * @param {string[]} options.tags - List of tags to allow filtering and process messages
-   * @param {?} options.payload - Any additional information related to current log message. That value will be stringifies with JSON.stringify() method
-   */
-  critical(message: string, options?: LogMessageOptions): this;
+    if (this._payload) {
+      data.payload = this._payload;
+    }
 
-  /**
-   * Actions that must be taken care of immediately.
-   * @param {string} message - Human explanation of record sense
-   * @param {LogMessageOptions} options - List of additional options to describe a message
-   * @param {string[]} options.tags - List of tags to allow filtering and process messages
-   * @param {?} options.payload - Any additional information related to current log message. That value will be stringifies with JSON.stringify() method
-   */
-  alert(message: string, options?: LogMessageOptions): this;
+    if (this._tags.size > 0) {
+      data.tags = Array.from<string>(this._tags);
+    }
 
-  /**
-   * The system is unusable.
-   * @param {string} message - Human explanation of record sense
-   * @param {LogMessageOptions} options - List of additional options to describe a message
-   * @param {string[]} options.tags - List of tags to allow filtering and process messages
-   * @param {?} options.payload - Any additional information related to current log message. That value will be stringifies with JSON.stringify() method
-   */
-  emergency(message: string, options?: LogMessageOptions): this;
-}
-
-/**
- * Description of additional options that can be passed to the log message
- */
-interface LogMessageOptions {
-  /**
-   * List of tags to allow filtering and process messages
-   * @type {string[]}
-   */
-  tags?:string[],
-
-  /**
-   * Any additional information related to current log message. That value will be stringifies with JSON.stringify() method
-   * @type {?}
-   */
-  payload?: unknown,
-}
-
-/**
- * Internal description of log message
- */
-interface LogMessageStructure extends LogMessageOptions {
-  /**
-   * Log level of message
-   */
-  level: AllowedLogLevels;
+    return data;
+  }
 }
 
 /**
  * Logger functionality that emits messages and allowing to subscribe transports to the log events for processing.
  */
-abstract class Logger extends EventEmitter implements LoggingMethods {
-  protected constructor(options: LoggerOptions) {
-    super();
-  }
-
-  /**
-   * Make an initialization of Logger object.
-   */
-  public abstract init(): Promise<void>;
-
+class Logger extends EventEmitter {
   /**
    * Actions that must be taken care of immediately.
    * @param {string} message - Human explanation of record sense
-   * @param {LogMessageOptions} options - List of additional options to describe a message
-   * @param {string[]} options.tags - List of tags to allow filtering and process messages
-   * @param {?} options.payload - Any additional information related to current log message. That value will be stringifies with JSON.stringify() method
    */
-  public alert(message: string, options?: LogMessageOptions): this {
-    this.emit('alert', message, { ...options, level: 'alert' } as LogMessageStructure);
-    return this;
+  public alert(message: string): LogMessage {
+    const struct = new LogMessage('alert', message);
+    this.emitLogMessage(struct);
+    return struct;
   }
 
   /**
    * Critical conditions.
    * @param {string} message - Human explanation of record sense
-   * @param {LogMessageOptions} options - List of additional options to describe a message
-   * @param {string[]} options.tags - List of tags to allow filtering and process messages
-   * @param {?} options.payload - Any additional information related to current log message. That value will be stringifies with JSON.stringify() method
    */
-  public critical(message: string, options?: LogMessageOptions): this {
-    this.emit('critical', message, { ...options, level: 'critical' } as LogMessageStructure);
-    return this;
+  public critical(message: string): LogMessage {
+    const struct = new LogMessage('critical', message);
+    this.emitLogMessage(struct);
+    return struct;
   }
 
   /**
    * Kernel debugging messages, output by the kernel if the developer enabled debugging at compile time
    * @param {string} message - Human explanation of record sense
-   * @param {LogMessageOptions} options - List of additional options to describe a message
-   * @param {string[]} options.tags - List of tags to allow filtering and process messages
-   * @param {?} options.payload - Any additional information related to current log message. That value will be stringifies with JSON.stringify() method
    */
-  public debug(message: string, options?: LogMessageOptions): this {
-    this.emit('debug', message, { ...options, level: 'debug' } as LogMessageStructure);
-    return this;
+  public debug(message: string): LogMessage {
+    const struct = new LogMessage('debug', message);
+    this.emitLogMessage(struct);
+    return struct;
   }
 
   /**
    * The system is unusable.
    * @param {string} message - Human explanation of record sense
-   * @param {LogMessageOptions} options - List of additional options to describe a message
-   * @param {string[]} options.tags - List of tags to allow filtering and process messages
-   * @param {?} options.payload - Any additional information related to current log message. That value will be stringifies with JSON.stringify() method
    */
-  public emergency(message: string, options?: LogMessageOptions): this {
-    this.emit('emergency', message, { ...options, level: 'emergency' } as LogMessageStructure);
-    return this;
+  public emergency(message: string): LogMessage {
+    const struct = new LogMessage('emergency', message);
+    this.emitLogMessage(struct);
+    return struct;
   }
 
   /**
    * Non-critical error conditions.
    * @param {string} message - Human explanation of record sense
-   * @param {LogMessageOptions} options - List of additional options to describe a message
-   * @param {string[]} options.tags - List of tags to allow filtering and process messages
-   * @param {?} options.payload - Any additional information related to current log message. That value will be stringifies with JSON.stringify() method
    */
-  public error(message: string, options?: LogMessageOptions): this {
-    this.emit('error', message, { ...options, level: 'error' } as LogMessageStructure);
-    return this;
+  public error(message: string): LogMessage {
+    const struct = new LogMessage('error', message);
+    this.emitLogMessage(struct);
+    return struct;
   }
 
   /**
    * Informational messages that require no action
    * @param {string} message - Human explanation of record sense
-   * @param {LogMessageOptions} options - List of additional options to describe a message
-   * @param {string[]} options.tags - List of tags to allow filtering and process messages
-   * @param {?} options.payload - Any additional information related to current log message. That value will be stringifies with JSON.stringify() method
    */
-  public info(message: string, options?: LogMessageOptions): this {
-    this.emit('info', message, { ...options, level: 'info' } as LogMessageStructure);
-    return this;
+  public info(message: string) {
+    const struct = new LogMessage('info', message);
+    this.emitLogMessage(struct);
+    return struct;
   }
 
   /**
    * Normal, but significant events.
    * @param {string} message - Human explanation of record sense
-   * @param {LogMessageOptions} options - List of additional options to describe a message
-   * @param {string[]} options.tags - List of tags to allow filtering and process messages
-   * @param {?} options.payload - Any additional information related to current log message. That value will be stringifies with JSON.stringify() method
    */
-  public notice(message: string, options?: LogMessageOptions): this {
-    this.emit('notice', message, { ...options, level: 'notice' } as LogMessageStructure);
-    return this;
+  public notice(message: string): LogMessage {
+    const struct = new LogMessage('notice', message);
+    this.emitLogMessage(struct);
+    return struct;
   }
 
   /**
    * Warning conditions that should be taken care of.
    * @param {string} message - Human explanation of record sense
-   * @param {LogMessageOptions} options - List of additional options to describe a message
-   * @param {string[]} options.tags - List of tags to allow filtering and process messages
-   * @param {?} options.payload - Any additional information related to current log message. That value will be stringifies with JSON.stringify() method
    */
-  public warning(message: string, options?: LogMessageOptions): this {
-    this.emit('warning', message, { ...options, level: 'warning' } as LogMessageStructure);
-    return this;
+  public warning(message: string): LogMessage {
+    const struct = new LogMessage('warning', message);
+    this.emitLogMessage(struct);
+    return struct;
+  }
+
+  /**
+   * Emits log message for all listeners
+   * @param message
+   * @protected
+   */
+  protected emitLogMessage(message: LogMessage) {
+    setTimeout(() => {
+      this.emit('log-message', message.toJSON());
+    }, 0);
   }
 }
 
 export {
   Logger,
+  LogMessage,
 
-  LoggerOptions,
-  LoggingMethods,
-  LogMessageOptions,
-  LogMessageStructure,
-
-  AllowedLogLevels,
+  LogLevelTypes,
+  LogMessageData,
 };
