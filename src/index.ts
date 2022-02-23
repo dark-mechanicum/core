@@ -1,5 +1,5 @@
-const Broker = {}
+import { Logger as Logger } from './logger'
 
 export {
-  Broker,
+  Logger,
 };

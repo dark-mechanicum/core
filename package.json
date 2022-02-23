@@ -9,7 +9,7 @@
   "author": "Andrei Kazakou <a.v.kazakou@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/enginseer/core.git"
+    "url": "https://github.com/dark-mechanicum/core.git"
   },
   "engines": {
     "node": ">=16",
@@ -19,7 +19,8 @@
     "build": "rimraf ./dist && tsc",
     "test": "jest --detectOpenHandles",
     "lint": "eslint --ext ts .",
-    "prepublishOnly": "npm run build && npm run lint && npm run test"
+    "prepublishOnly": "npm run build && npm run lint && npm run test",
+    "prepare": "husky install"
   },
   "devDependencies": {
     "@types/jest": "^27.4.0",
