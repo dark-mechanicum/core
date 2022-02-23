@@ -63,7 +63,7 @@ jobs:
     - name: Install Node.js dependencies
       run: npm ci
 
-    - name: Run unit tests
+    - name: Compile Javascript code from TypeScript
       run: npm run build
 
     - name: Perform CodeQL Analysis
