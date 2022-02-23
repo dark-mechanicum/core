@@ -3,7 +3,7 @@ import EventEmitter from 'events';
 /**
  * Allowed levels of log messages
  */
-type LogLevelTypes = 'debug' | 'info' | 'notice' | 'warning' | 'error' | 'critical' | 'emergency' | 'alert';
+type LogLevelTypes = 'debug' | 'info' | 'notice' | 'warn' | 'error' | 'crit' | 'emerg' | 'alert';
 
 /**
  * Log message data structure that will be delivered to the log transports
@@ -12,7 +12,7 @@ interface LogMessageData {
   /**
    * Date when log message was created
    */
-  date: string;
+  date: Date;
   /**
    * Level of log message
    */
@@ -95,7 +95,7 @@ class LogMessage {
    */
   toJSON(): LogMessageData {
     const data: LogMessageData = {
-      date: this._date.toISOString(),
+      date: this._date,
       level: this._level,
       message: this._message,
     };
@@ -130,8 +130,8 @@ class Logger extends EventEmitter {
    * Critical conditions.
    * @param {string} message - Human explanation of record sense
    */
-  public critical(message: string): LogMessage {
-    const struct = new LogMessage('critical', message);
+  public crit(message: string): LogMessage {
+    const struct = new LogMessage('crit', message);
     this.emitLogMessage(struct);
     return struct;
   }
@@ -150,8 +150,8 @@ class Logger extends EventEmitter {
    * The system is unusable.
    * @param {string} message - Human explanation of record sense
    */
-  public emergency(message: string): LogMessage {
-    const struct = new LogMessage('emergency', message);
+  public emerg(message: string): LogMessage {
+    const struct = new LogMessage('emerg', message);
     this.emitLogMessage(struct);
     return struct;
   }
@@ -190,8 +190,8 @@ class Logger extends EventEmitter {
    * Warning conditions that should be taken care of.
    * @param {string} message - Human explanation of record sense
    */
-  public warning(message: string): LogMessage {
-    const struct = new LogMessage('warning', message);
+  public warn(message: string): LogMessage {
+    const struct = new LogMessage('warn', message);
     this.emitLogMessage(struct);
     return struct;
   }

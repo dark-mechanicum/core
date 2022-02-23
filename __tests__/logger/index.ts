@@ -6,10 +6,10 @@ const registeredLevels: LogLevelTypes[] = [
   'debug',
   'info',
   'notice',
-  'warning',
+  'warn',
   'error',
-  'critical',
-  'emergency',
+  'crit',
+  'emerg',
   'alert',
 ];
 
