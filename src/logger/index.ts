@@ -210,8 +210,6 @@ class Logger extends EventEmitter {
 
 export {
   Logger,
-  LogMessage,
-
   LogLevelTypes,
   LogMessageData,
 };
