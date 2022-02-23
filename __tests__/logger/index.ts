@@ -1,6 +1,6 @@
 import { LogLevelTypes, Logger, LogMessageData } from '../../src/logger';
 
-const initialMessage: string = 'Testing message';
+const initialMessage = 'Testing message';
 const initialOptions = { tags: ['testingTag'], payload: { test: 'testPayload' } };
 const registeredLevels: LogLevelTypes[] = [
   'debug',
