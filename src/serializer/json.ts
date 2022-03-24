@@ -22,7 +22,7 @@ class JSONSerializer extends Serializer {
    * Convert data from binary view to the exact data
    * @param {Buffer} data
    */
-  async deserialize<T extends unknown>(data: Buffer): Promise<T> {
+  async deserialize<T>(data: Buffer): Promise<T> {
     return JSON.parse(data.toString(this.encoding));
   }
 
