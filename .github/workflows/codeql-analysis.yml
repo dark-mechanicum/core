@@ -54,7 +54,7 @@ jobs:
     - name: Cache npm sources
       uses: actions/cache@v2
       env:
-        cache-name: lib-config-revenue
+        cache-name: dark-mechanicum-core
         nodejs-version: node${{ matrix.node }}
       with:
         path: ~/.npm
