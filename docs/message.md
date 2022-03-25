@@ -17,6 +17,7 @@ Options:
 * payload [unknown0] - some usefully payload for the message
 
 Available data:
+* id [string] - unique randomly generated hex string with 64 characters length
 * createdAt [Date] - actual date of message creating
 * createdBy [string] - name of the action who's created that message
 * payload [unknown0] - some usefully payload for the message

@@ -1,3 +1,5 @@
+import { randomBytes } from 'crypto';
+
 /**
  * Options to create a new Message object
  */
@@ -16,6 +18,10 @@ interface MessageOptions<Payload> {
  * Description of basic Message class
  */
 class Message<Payload> {
+  /**
+   * Unique message identifier
+   */
+  readonly id: string = randomBytes(32).toString('hex');
   /**
    * Action name who's created that message
    */
