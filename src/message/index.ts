@@ -5,9 +5,9 @@ import { randomBytes } from 'crypto';
  */
 interface MessageOptions<Payload> {
   /**
-   * Action name who's created that message
+   * Message type (service name, action name ot other message type)
    */
-  createdBy: string;
+  type: string;
   /**
    * Payload of message
    */
@@ -23,9 +23,9 @@ class Message<Payload> {
    */
   readonly id: string = randomBytes(32).toString('hex');
   /**
-   * Action name who's created that message
+   * Message type (service name, action name ot other message type)
    */
-  readonly createdBy: string;
+  readonly type: string;
   /**
    * Date when that message was actually created
    */
@@ -35,8 +35,8 @@ class Message<Payload> {
    */
   readonly payload: Payload;
 
-  constructor({ createdBy, payload }: MessageOptions<Payload>) {
-    this.createdBy = createdBy;
+  constructor({ type, payload }: MessageOptions<Payload>) {
+    this.type = type;
     this.payload = payload;
   }
 }

@@ -1,0 +1,31 @@
+@startuml
+' scale 1980 width
+
+'!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master//font-awesome
+!define FONTAWESOME5 https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master//font-awesome-5
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master//devicons
+!define GOVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master//govicons
+!define WEATHER https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master//weather
+!define MATERIAL https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master//material
+!define DEVICONS2 https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master//devicons2
+
+' Sprites https://github.com/tupadr3/plantuml-icon-font-sprites
+!include MATERIAL/message.puml
+!include MATERIAL/memory.puml
+
+Container(broker, "Message Broker", "Messages Delivery System", "Main responsibility of Message Broker is receive a message, delivery it to processor, wait a response, and delivery response to a waiter", $sprite="memory")
+Container(serializer, "Serializer", "Message Serializer", "Message serializer functionality pointed to represent data and payload into required format. Serializer should be the same for serializing and deserializing data", $sprite="message")
+Container(action, "Action", "Message Processor", "Functionality that expecting message from broker, processing that message and provides a response with results of message processing to the broker", $sprite="message")
+Container(logs, "Logs", "Logger", "Abstraction that provides possibility to get a log messages about actions and system activities. Error reporting and tracing", $sprite="message")
+Container(transport, "Transport", "Transport", "Physical message delivery to the messages exchange point", $sprite="message")
+
+Rel(transport, serializer, "Listening messages from the exchange point")
+Rel(serializer, broker, "Send message for routing to the required Action")
+Rel(broker, action, "Routing message to the required action")
+Rel(action, logs, "Log message processing data")
+Rel(action, broker, "Send response to the requester")
+Rel(broker, serializer, "Convert message to transport layer format")
+Rel(serializer, transport, "Send message to the exchange point")
+@enduml
