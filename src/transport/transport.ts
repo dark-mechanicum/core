@@ -1,8 +1,21 @@
 import EventEmitter from 'events';
 
 abstract class Transport extends EventEmitter {
-  public abstract connect(): Promise<void>;
-  public abstract disconnect(): Promise<void>;
+  /**
+   * Initialization of Transport functionality
+   * @returns {Promise<void>}
+   */
+  public initialize(): Promise<void> {
+    return Promise.resolve();
+  }
+
+  /**
+   * Terminate of Transport functionality
+   * @returns {Promise<void>}
+   */
+  public terminate(): Promise<void> {
+    return Promise.resolve();
+  }
 }
 
 export {

@@ -117,6 +117,22 @@ class LogMessage {
  */
 class Logger extends EventEmitter {
   /**
+   * Initialization of Logger functionality
+   * @returns {Promise<void>}
+   */
+  public initialize(): Promise<void> {
+    return Promise.resolve();
+  }
+
+  /**
+   * Terminate of Logger functionality
+   * @returns {Promise<void>}
+   */
+  public terminate(): Promise<void> {
+    return Promise.resolve();
+  }
+
+  /**
    * Actions that must be taken care of immediately.
    * @param {string} message - Human explanation of record sense
    */

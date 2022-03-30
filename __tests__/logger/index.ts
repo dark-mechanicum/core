@@ -14,6 +14,18 @@ const registeredLevels: LogLevelTypes[] = [
 ];
 
 describe('Logger functionality', () => {
+  it('should initialize functionality', () => {
+    const serializer = new Logger();
+    const result = serializer.initialize();
+    expect(result).resolves.not.toThrow()
+  });
+
+  it('should terminate functionality', () => {
+    const serializer = new Logger();
+    const result = serializer.terminate();
+    expect(result).resolves.not.toThrow()
+  });
+
   for (const level of registeredLevels) {
     // testing all methods with parameters option
     it(`should emit "${level}" event with options`, (done) => {

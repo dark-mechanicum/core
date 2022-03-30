@@ -13,15 +13,15 @@ describe('Event Emitter Transport functionality', () => {
     expect(listener).toHaveBeenCalledWith(data);
   });
 
-  it('should connect', () => {
+  it('should initialize functionality', () => {
     const transport = new EventEmitterTransport();
-    const result = transport.connect();
+    const result = transport.initialize();
     expect(result).resolves.not.toThrow();
   });
 
-  it('should disconnect', () => {
+  it('should terminate functionality', () => {
     const transport = new EventEmitterTransport();
-    const result = transport.disconnect();
+    const result = transport.terminate();
     expect(result).resolves.not.toThrow();
   });
 });

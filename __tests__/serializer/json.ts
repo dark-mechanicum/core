@@ -5,6 +5,18 @@ describe('JSON Serializer', () => {
   const bufferFixture =  Buffer.from(JSON.stringify(objectFixture));
   const bufferASCIIFixture =  Buffer.from(JSON.stringify(objectFixture), 'ascii');
 
+  it('should initialize functionality', () => {
+    const serializer = new JSONSerializer();
+    const result = serializer.initialize();
+    expect(result).resolves.not.toThrow()
+  });
+
+  it('should terminate functionality', () => {
+    const serializer = new JSONSerializer();
+    const result = serializer.terminate();
+    expect(result).resolves.not.toThrow()
+  });
+
   it('should serialize object', async () => {
     const serializer = new JSONSerializer();
     const result = await serializer.serialize(objectFixture);
