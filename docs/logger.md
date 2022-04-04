@@ -15,6 +15,10 @@ logger.on('log-message', (data: LogMessageData) => {
 })
 
 logger.info('Some info level message').tags(['example']).payload({ some: { payload: [ "Some payload here" ] } });
+
+// errors reporting example
+const error = new Error('Error message');
+logger.info('Handled some exception').tags(['exception']).exception(error);
 ```
 Output:
 ```text
@@ -34,3 +38,4 @@ Logger Class Methods:
 All logger class messages will return an LogMessage object, that contain additional methods for chain calling:
 * tags(tags: string[]) - Assign to created message additional tags
 * payload(data: unknown) - Assign to created message additional data with specific user data
+* exception(error: Error) - Assign to created message an exception

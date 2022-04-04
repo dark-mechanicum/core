@@ -1,6 +1,9 @@
-import { Serializer } from './serializer';
+import { Serializer, SerializerOption } from './serializer';
 
-interface JSONSerializerOptions {
+/**
+ * JSON Serializer Options
+ */
+interface JSONSerializerOptions extends SerializerOption {
   /**
    * Encoding of binary data
    */
@@ -11,8 +14,18 @@ interface JSONSerializerOptions {
  * JSON serializer for Node.js data
  */
 class JSONSerializer extends Serializer {
+  /**
+   * Encoding of binary data
+   * @protected
+   */
   protected encoding: BufferEncoding = 'utf8';
 
+  /**
+   * Create a new one instance of JSONSerializer
+   * @param {JSONSerializerOptions} options - Serializer options
+   * @param {BufferEncoding} options.encoding - Encoding of binary data
+   * @param {Logger} options.logger - Logger instance
+   */
   constructor(options?: JSONSerializerOptions) {
     super();
     this.encoding = options?.encoding || 'utf8';

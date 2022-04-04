@@ -1,21 +1,50 @@
+import { Logger } from '../logger';
+
+type SerializerOption = Record<string, unknown>;
+
 /**
  * Abstract class for implementing new serialization functionality
  */
 abstract class Serializer {
   /**
+   * The logger to use for logging
+   */
+  private _logger?: Logger;
+
+  /**
    * Initialization of Serializer functionality
    * @returns {Promise<void>}
    */
-  public initialize(): Promise<void> {
-    return Promise.resolve();
+  public initialize(): Promise<this> {
+    return Promise.resolve(this);
   }
 
   /**
    * Terminate of Serializer functionality
    * @returns {Promise<void>}
    */
-  public terminate(): Promise<void> {
-    return Promise.resolve();
+  public terminate(): Promise<this> {
+    return Promise.resolve(this);
+  }
+
+  /**
+   * Get Logger instance
+   * @protected
+   */
+  protected get logger(): Logger {
+    if (!this._logger) {
+      throw new Error('Logger is not assigned');
+    }
+
+    return this._logger;
+  }
+
+  /**
+   * Set Logger instance
+   * @param {Logger} logger
+   */
+  public setLogger(logger: Logger): void {
+    this._logger = logger;
   }
 
   /**
@@ -33,4 +62,5 @@ abstract class Serializer {
 
 export {
   Serializer,
+  SerializerOption,
 };

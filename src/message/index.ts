@@ -7,11 +7,15 @@ interface MessageOptions<Payload> {
   /**
    * Message type (service name, action name ot other message type)
    */
-  type: string;
+  topic: string;
   /**
    * Payload of message
    */
   payload: Payload;
+  /**
+   * Type of payload (normal or exception)
+   */
+  type?: 'normal' | 'exception';
 }
 
 /**
@@ -25,7 +29,7 @@ class Message<Payload> {
   /**
    * Message type (service name, action name ot other message type)
    */
-  readonly type: string;
+  readonly topic: string;
   /**
    * Date when that message was actually created
    */
@@ -34,10 +38,18 @@ class Message<Payload> {
    * Payload of message
    */
   readonly payload: Payload;
+  /**
+   * Type of message (normal or exception)
+   */
+  readonly type: string = 'normal';
 
-  constructor({ type, payload }: MessageOptions<Payload>) {
-    this.type = type;
+  constructor({ topic, payload, type }: MessageOptions<Payload>) {
+    this.topic = topic;
     this.payload = payload;
+
+    if (type) {
+      this.type = type;
+    }
   }
 }
 

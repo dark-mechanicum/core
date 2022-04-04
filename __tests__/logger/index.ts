@@ -2,6 +2,7 @@ import { LogLevelTypes, Logger, LogMessageData } from '../../src/logger';
 
 const initialMessage = 'Testing message';
 const initialOptions = { tags: ['testingTag'], payload: { test: 'testPayload' } };
+const initialError = new Error('Testing error');
 const registeredLevels: LogLevelTypes[] = [
   'debug',
   'info',
@@ -35,14 +36,15 @@ describe('Logger functionality', () => {
           expect(message).toHaveProperty('level', level);
           expect(message).toHaveProperty('date');
           expect(message).toHaveProperty('payload', initialOptions.payload);
-          expect(message).toHaveProperty('tags', initialOptions.tags);
+          expect(message).toHaveProperty('tags', [level, ...initialOptions.tags]);
+          expect(message).toHaveProperty('error', { ...initialError });
           done();
         });
       };
 
       const logger = new Logger();
       verify(logger, level, done);
-      logger[level](initialMessage).tags(initialOptions.tags).payload(initialOptions.payload);
+      logger[level](initialMessage).tags(initialOptions.tags).payload(initialOptions.payload).exception(initialError);
     });
 
     // testing all methods without options parameter
@@ -53,7 +55,7 @@ describe('Logger functionality', () => {
           expect(message).toHaveProperty('level', level);
           expect(message).toHaveProperty('date');
           expect(message).not.toHaveProperty('payload');
-          expect(message).not.toHaveProperty('tags');
+          expect(message).toHaveProperty('tags', [level]);
           done();
         });
       };
@@ -71,7 +73,7 @@ describe('Logger functionality', () => {
           expect(message).toHaveProperty('level', level);
           expect(message).toHaveProperty('date');
           expect(message).not.toHaveProperty('payload');
-          expect(message).toHaveProperty('tags', initialOptions.tags);
+          expect(message).toHaveProperty('tags', [level, ...initialOptions.tags]);
           done();
         });
       };
@@ -89,7 +91,7 @@ describe('Logger functionality', () => {
           expect(message).toHaveProperty('level', level);
           expect(message).toHaveProperty('date');
           expect(message).toHaveProperty('payload', initialOptions.payload);
-          expect(message).not.toHaveProperty('tags');
+          expect(message).toHaveProperty('tags', [level]);
           done();
         });
       };
